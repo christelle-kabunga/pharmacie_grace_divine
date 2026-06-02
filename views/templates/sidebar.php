@@ -40,7 +40,7 @@ $roleBadge = $roleBadges[$userRole] ?? ['class' => 'bg-secondary', 'label' => 'U
         <div class="icon-box bg-primary text-white">
             <i class="bi bi-capsule-pill fs-4"></i>
         </div>
-        <span class="text-primary">PharmaGest</span>
+        <span class="text-primary">Pharmacie grace divine</span>
     </div>
     
     <div class="px-3 py-2">

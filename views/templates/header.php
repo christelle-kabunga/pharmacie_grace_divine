@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= isset($title) ? $title . ' - PharmaGest' : 'PharmaGest' ?></title>
+    <title><?= isset($title) ? $title . ' - Pharmacie grace divie' : 'Pharmacie grace divine' ?></title>
     
     <!-- Bootstrap 5 Local -->
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">

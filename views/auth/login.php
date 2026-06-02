@@ -7,7 +7,7 @@
                 <div class="icon-box bg-primary text-white mx-auto mb-3" style="width: 70px; height: 70px; border-radius: 20px; display: flex; align-items: center; justify-content: center;">
                     <i class="bi bi-capsule-pill fs-2"></i>
                 </div>
-                <h3 class="fw-bold">PharmaGest</h3>
+                <h3 class="fw-bold">Pharmacie grace divine</h3>
                 <p class="text-muted">Système de Gestion de Pharmacie</p>
             </div>
             

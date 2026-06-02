@@ -1,5 +1,5 @@
 <?php
-echo "<h2>Diagnostic PharmaGest</h2>";
+echo "<h2>Diagnostic Pharmacie_grace_divine</h2>";
 
 $checks = [
     'config/Database.php' => file_exists('config/Database.php'),
