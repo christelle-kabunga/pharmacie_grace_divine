@@ -1,0 +1,34 @@
+# ============================================
+# PHARMACIE - CONFIGURATION APACHE
+# ============================================
+
+RewriteEngine On
+
+# Si vous êtes dans un sous-dossier (ex: localhost/pharmacie/), décommentez :
+# RewriteBase /pharmacie/
+
+# Ne pas réécrire les fichiers et dossiers existants
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Rediriger tout vers index.php
+RewriteRule ^(.*)$ index.php [QSA,L]
+
+# Sécurité
+Options -Indexes
+
+# Interdire l'accès aux fichiers sensibles
+<FilesMatch "^\.">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Protéger le .htaccess
+<Files .htaccess>
+    Order allow,deny
+    Deny from all
+</Files>
+
+# Configuration PHP
+php_value upload_max_filesize 10M
+php_value post_max_size 10M
