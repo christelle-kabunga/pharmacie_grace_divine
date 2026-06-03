@@ -114,6 +114,47 @@ class PersonnelController {
         header('Location: ?page=personnel');
         exit;
     }
+
+    public function delete() {
+        if (!$this->userPerms['delete']) {
+            $_SESSION['error'] = 'Permission refusée';
+            header('Location: ?page=personnel');
+            exit;
+        }
+
+        $id = $_GET['id'] ?? 0;
+        if ($id == $_SESSION['user_id']) {
+            $_SESSION['error'] = 'Vous ne pouvez pas supprimer votre propre compte';
+            header('Location: ?page=personnel');
+            exit;
+        }
+
+        if ($this->personnelModel->delete($id)) {
+            $_SESSION['success'] = 'Utilisateur désactivé';
+        } else {
+            $_SESSION['error'] = 'Erreur lors de la suppression';
+        }
+        header('Location: ?page=personnel');
+        exit;
+    }
+
+    public function resetPassword() {
+        if (!$this->userPerms['edit']) {
+            $_SESSION['error'] = 'Permission refusée';
+            header('Location: ?page=personnel');
+            exit;
+        }
+
+        $id = $_GET['id'] ?? 0;
+        $new = 'password';
+        if ($this->userModel->updatePassword($id, $new)) {
+            $_SESSION['success'] = 'Mot de passe réinitialisé à : ' . $new;
+        } else {
+            $_SESSION['error'] = 'Erreur lors de la réinitialisation';
+        }
+        header('Location: ?page=personnel');
+        exit;
+    }
     
     public function profil() {
         $user = $this->personnelModel->getById($_SESSION['user_id']);

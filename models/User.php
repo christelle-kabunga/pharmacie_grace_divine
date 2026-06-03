@@ -110,6 +110,12 @@ class User {
     public function delete($id) {
         return $this->updateStatut($id, 'inactif');
     }
+
+    public function updatePassword($id, $newPassword) {
+        $hash = password_hash($newPassword, PASSWORD_DEFAULT);
+        $stmt = $this->db->prepare("UPDATE utilisateurs SET password_hash = ? WHERE id = ?");
+        return $stmt->execute([$hash, $id]);
+    }
     
     public function getPermissions($role) {
         return $this->permissions[$role] ?? $this->permissions['vendeur'];

@@ -122,6 +122,9 @@ require 'views/templates/navbar.php';
 
 <script>
 const medicaments = <?= json_encode($medicaments) ?>;
+const tauxList = <?= json_encode($taux) ?>;
+const tauxMap = {};
+tauxList.forEach(t => tauxMap[t.devise] = parseFloat(t.taux));
 let ligneIndex = 0;
 
 function ajouterLigne() {
@@ -161,13 +164,65 @@ document.getElementById('deviseSelect').addEventListener('change', function() {
 });
 
 // Calcul monnaie
+function calculerTotal() {
+    let sous = 0;
+    document.querySelectorAll('.ligne-vente').forEach(tr => {
+        const q = parseFloat(tr.querySelector('.qte').value) || 0;
+        const prix = parseFloat(tr.querySelector('.prix').value) || 0;
+        const remise = parseFloat(tr.querySelector('.remise').value) || 0;
+        const totalLigne = (q * prix) - remise;
+        tr.querySelector('.total-ligne').textContent = totalLigne.toFixed(2);
+        sous += totalLigne;
+    });
+
+    document.getElementById('sousTotal').textContent = sous.toFixed(2);
+    document.getElementById('inputSousTotal').value = sous.toFixed(2);
+
+    const remiseGlob = parseFloat(document.getElementById('remiseGlobale').value) || 0;
+    const totalFinal = Math.max(0, sous - remiseGlob);
+    document.getElementById('totalFinal').textContent = totalFinal.toFixed(2);
+
+    // conversion affichage: always show both CDF and USD
+    const selectedDev = document.getElementById('deviseSelect').value;
+    const usdRate = tauxMap['USD'] || 1;
+    let totalCDF = 0, totalUSD = 0;
+    if (selectedDev === 'USD') {
+        totalUSD = totalFinal;
+        totalCDF = totalFinal * usdRate;
+    } else {
+        totalCDF = totalFinal;
+        totalUSD = usdRate ? (totalFinal / usdRate) : 0;
+    }
+
+    // show alt totals (append small text under total)
+    let alt = document.getElementById('altTotals');
+    if (!alt) {
+        alt = document.createElement('div');
+        alt.id = 'altTotals';
+        alt.className = 'text-muted small mt-1';
+        document.getElementById('totalFinal').parentNode.appendChild(alt);
+    }
+    alt.textContent = `= ${totalCDF.toFixed(2)} CDF  /  ${totalUSD.toFixed(2)} USD`;
+
+    // update monnaie rendu when montant payé present
+    const payeInp = document.getElementById('montantPaye');
+    const paye = parseFloat(payeInp.value) || 0;
+    document.getElementById('monnaie').value = (paye - totalFinal).toFixed(2);
+}
+
+// update monnaie on input
 document.getElementById('montantPaye').addEventListener('input', function() {
-    const total = parseFloat(document.getElementById('totalFinal').textContent) || 0;
-    const paye = parseFloat(this.value) || 0;
-    document.getElementById('monnaie').value = (paye - total).toFixed(2);
+    calculerTotal();
 });
 
+// recalc when taux/devise changes
+document.getElementById('deviseSelect').addEventListener('change', function() {
+    calculerTotal();
+});
+
+// ensure at least one ligne and initial calc
 ajouterLigne();
+calculerTotal();
 </script>
 
 <?php require 'views/templates/footer.php'; ?>

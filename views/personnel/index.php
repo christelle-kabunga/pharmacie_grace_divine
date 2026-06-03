@@ -15,6 +15,7 @@ require 'views/templates/navbar.php';
 
         <div class="card">
             <div class="card-body">
+                <?php $personnel = $personnel ?? []; ?>
                 <table class="table datatable">
                     <thead>
                         <tr>
@@ -49,7 +50,8 @@ require 'views/templates/navbar.php';
                             <td><span class="badge bg-<?= $p['statut'] == 'actif' ? 'success' : 'secondary' ?>"><?= ucfirst($p['statut']) ?></span></td>
                             <td>
                                 <a href="?page=personnel&action=edit&id=<?= $p['id'] ?>" class="btn btn-sm btn-primary"><i class="bi bi-pencil"></i></a>
-                                <a href="?page=personnel&action=delete&id=<?= $p['id'] ?>" class="btn btn-sm btn-danger btn-delete"><i class="bi bi-trash"></i></a>
+                                <a href="?page=personnel&action=resetPassword&id=<?= $p['id'] ?>" class="btn btn-sm btn-warning" onclick="return confirm('Réinitialiser le mot de passe pour <?= addslashes($p['prenom'].' '.$p['nom']) ?> ?')"><i class="bi bi-key"></i></a>
+                                <a href="?page=personnel&action=delete&id=<?= $p['id'] ?>" class="btn btn-sm btn-danger btn-delete" onclick="return confirm('Désactiver <?= addslashes($p['prenom'].' '.$p['nom']) ?> ?')"><i class="bi bi-trash"></i></a>
                             </td>
                         </tr>
                         <?php endforeach; ?>

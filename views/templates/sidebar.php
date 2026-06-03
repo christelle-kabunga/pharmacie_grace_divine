@@ -35,7 +35,7 @@ $roleBadges = [
 $roleBadge = $roleBadges[$userRole] ?? ['class' => 'bg-secondary', 'label' => 'Utilisateur'];
 ?>
 
-<<aside class="sidebar" id="sidebar">
+<aside class="sidebar" id="sidebar">
     <div class="sidebar-brand">
         <div class="icon-box bg-primary text-white">
             <i class="bi bi-capsule-pill fs-4"></i>
