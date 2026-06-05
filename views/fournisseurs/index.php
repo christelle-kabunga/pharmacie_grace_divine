@@ -1,8 +1,6 @@
 <?php
 $pageTitle = "Gestion des Fournisseurs";
-require_once __DIR__ . '/../templates/header.php';
-require_once __DIR__ . '/../templates/sidebar.php';
-require_once __DIR__ . '/../templates/navbar.php';
+require_once __DIR__ . '/../layouts/header.php';
 ?>
 
 <div class="main-content">
@@ -42,47 +40,61 @@ require_once __DIR__ . '/../templates/navbar.php';
             </div>
         </div>
 
-        <div class="card">
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-striped table-hover">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>ID</th>
-                                <th>Nom</th>
-                                <th>Telephone</th>
-                                <th>Adresse</th>
-                                <th>Pays</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($fournisseurs as $row): ?>
-                            <tr>
-                                <td><?= $row['id'] ?></td>
-                                <td><strong><?= htmlspecialchars($row['nom']) ?></strong></td>
-                                <td><?= htmlspecialchars($row['telephone'] ?? '-') ?></td>
-                                <td><?= nl2br(htmlspecialchars($row['adresse'] ?? '-')) ?></td>
-                                <td><?= htmlspecialchars($row['pays'] ?? '-') ?></td>
-                                <td>
-                                    <a href="index.php?page=fournisseur&action=view&id=<?= $row['id'] ?>" class="btn btn-sm btn-info" title="Voir">
-                                        <i class="bi bi-eye"></i>
-                                    </a>
-                                    <a href="index.php?page=fournisseur&action=edit&id=<?= $row['id'] ?>" class="btn btn-sm btn-warning" title="Modifier">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
-                                    <a href="index.php?page=fournisseur&action=delete&id=<?= $row['id'] ?>" 
-                                       class="btn btn-sm btn-danger" 
-                                       onclick="return confirm('Supprimer ce fournisseur ?')"
-                                       title="Supprimer">
-                                        <i class="bi bi-trash"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Nom</th>
+                            <th>Contact</th>
+                            <th>Téléphone</th>
+                            <th>Email</th>
+                            <th>Ville</th>
+                            <th>Statut</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($fournisseurs as $row): ?>
+                        <tr>
+                            <td><?= $row['id'] ?></td>
+                            <td><strong><?= htmlspecialchars($row['nom']) ?></strong></td>
+                            <td><?= htmlspecialchars($row['contact'] ?? '-') ?></td>
+                            <td><?= htmlspecialchars($row['telephone'] ?? '-') ?></td>
+                            <td><?= htmlspecialchars($row['email'] ?? '-') ?></td>
+                            <td><?= htmlspecialchars($row['ville'] ?? '-') ?></td>
+                            <td>
+                                <?php if ($row['statut'] == 'actif'): ?>
+                                    <span class="badge bg-success">Actif</span>
+                                <?php else: ?>
+                                    <span class="badge bg-danger">Inactif</span>
+                                <?php endif; ?>
+                            </td>
+                            <td>
+                                <a href="index.php?page=fournisseurs&action=view&id=<?= $row['id'] ?>" class="btn btn-sm btn-info" title="Voir">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="index.php?page=fournisseurs&action=edit&id=<?= $row['id'] ?>" class="btn btn-sm btn-warning" title="Modifier">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="index.php?page=fournisseurs&action=toggle&id=<?= $row['id'] ?>" 
+                                   class="btn btn-sm btn-<?= $row['statut'] == 'actif' ? 'secondary' : 'success' ?>" 
+                                   title="<?= $row['statut'] == 'actif' ? 'Désactiver' : 'Activer' ?>">
+                                    <i class="fas fa-power-off"></i>
+                                </a>
+                                <a href="index.php?page=fournisseurs&action=delete&id=<?= $row['id'] ?>" 
+                                   class="btn btn-sm btn-danger" 
+                                   onclick="return confirm('Supprimer ce fournisseur ?')"
+                                   title="Supprimer">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>

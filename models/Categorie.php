@@ -30,17 +30,6 @@ class Categorie {
         $stmt = $this->db->prepare("DELETE FROM categories_medicament WHERE id = ?");
         return $stmt->execute([$id]);
     }
-    
-    public function countMedicaments($id) {
-```php
-        return $stmt->execute([$data['nom'], $data['description'], $id]);
-    }
-    
-    public function delete($id) {
-        $stmt = $this->db->prepare("DELETE FROM categories_medicament WHERE id = ?");
-        return $stmt->execute([$id]);
-    }
-    
     public function countMedicaments($id) {
         $stmt = $this->db->prepare("SELECT COUNT(*) FROM medicaments WHERE categorie_id = ?");
         $stmt->execute([$id]);

@@ -19,8 +19,12 @@ class FournisseurController {
             $data = [
                 'nom' => htmlspecialchars(strip_tags($_POST['nom'])),
                 'telephone' => htmlspecialchars(strip_tags($_POST['telephone'] ?? '')),
+                'email' => htmlspecialchars(strip_tags($_POST['email'] ?? '')),
                 'adresse' => htmlspecialchars(strip_tags($_POST['adresse'] ?? '')),
-                'pays' => htmlspecialchars(strip_tags($_POST['pays'] ?? ''))
+                'pays' => htmlspecialchars(strip_tags($_POST['pays'] ?? '')),
+                'ville' => htmlspecialchars(strip_tags($_POST['ville'] ?? '')),
+                'nif' => htmlspecialchars(strip_tags($_POST['nif'] ?? '')),
+                'statut' => htmlspecialchars(strip_tags($_POST['statut'] ?? 'actif'))
             ];
             
             if ($this->model->create($data)) {
@@ -46,8 +50,12 @@ class FournisseurController {
             $data = [
                 'nom' => htmlspecialchars(strip_tags($_POST['nom'])),
                 'telephone' => htmlspecialchars(strip_tags($_POST['telephone'] ?? '')),
+                'email' => htmlspecialchars(strip_tags($_POST['email'] ?? '')),
                 'adresse' => htmlspecialchars(strip_tags($_POST['adresse'] ?? '')),
-                'pays' => htmlspecialchars(strip_tags($_POST['pays'] ?? ''))
+                'pays' => htmlspecialchars(strip_tags($_POST['pays'] ?? '')),
+                'ville' => htmlspecialchars(strip_tags($_POST['ville'] ?? '')),
+                'nif' => htmlspecialchars(strip_tags($_POST['nif'] ?? '')),
+                'statut' => htmlspecialchars(strip_tags($_POST['statut'] ?? 'actif'))
             ];
             
             if ($this->model->update($id, $data)) {

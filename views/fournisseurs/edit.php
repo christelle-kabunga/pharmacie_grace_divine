@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Modifier Fournisseur";
-require_once __DIR__ . '/../templates/header.php';
+require_once __DIR__ . '/../layouts/header.php';
 ?>
 
 <div class="container-fluid">
@@ -15,7 +15,7 @@ require_once __DIR__ . '/../templates/header.php';
         <div class="card-body">
             <form method="POST" action="index.php?page=fournisseur&action=edit&id=<?= $fournisseur['id'] ?>">
                 <div class="row">
-                    <div class="col-md-4 mb-3">
+                    <div class="col-md-6 mb-3">
                         <label class="form-label">Nom <span class="text-danger">*</span></label>
                         <input type="text" name="nom" class="form-control" value="<?= htmlspecialchars($fournisseur['nom']) ?>" required>
                     </div>
@@ -23,15 +23,38 @@ require_once __DIR__ . '/../templates/header.php';
                         <label class="form-label">Téléphone</label>
                         <input type="text" name="telephone" class="form-control" value="<?= htmlspecialchars($fournisseur['telephone'] ?? '') ?>">
                     </div>
-                    <div class="col-md-4 mb-3">
-                        <label class="form-label">Pays</label>
-                        <input type="text" name="pays" class="form-control" value="<?= htmlspecialchars($fournisseur['pays'] ?? '') ?>">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" name="email" class="form-control" value="<?= htmlspecialchars($fournisseur['email'] ?? '') ?>">
                     </div>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Adresse</label>
                     <textarea name="adresse" class="form-control" rows="2"><?= htmlspecialchars($fournisseur['adresse'] ?? '') ?></textarea>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Pays</label>
+                        <input type="text" name="pays" class="form-control" value="<?= htmlspecialchars($fournisseur['pays'] ?? '') ?>">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Ville</label>
+                        <input type="text" name="ville" class="form-control" value="<?= htmlspecialchars($fournisseur['ville'] ?? '') ?>">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">NIF</label>
+                        <input type="text" name="nif" class="form-control" value="<?= htmlspecialchars($fournisseur['nif'] ?? '') ?>">
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Statut</label>
+                    <select name="statut" class="form-select">
+                        <option value="actif" <?= $fournisseur['statut'] == 'actif' ? 'selected' : '' ?>>Actif</option>
+                        <option value="inactif" <?= $fournisseur['statut'] == 'inactif' ? 'selected' : '' ?>>Inactif</option>
+                    </select>
                 </div>
 
                 <div class="text-end">
