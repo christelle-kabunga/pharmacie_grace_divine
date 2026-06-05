@@ -1,6 +1,9 @@
 <?php
 $pageTitle = "Gestion des Fournisseurs";
 require_once __DIR__ . '/../layouts/header.php';
+
+$fournisseurs = $fournisseurs ?? [];
+$total = $total ?? count($fournisseurs);
 ?>
 
 <div class="container-fluid">
@@ -47,10 +50,8 @@ require_once __DIR__ . '/../layouts/header.php';
                         <tr>
                             <th>ID</th>
                             <th>Nom</th>
-                            <th>Contact</th>
                             <th>Téléphone</th>
-                            <th>Email</th>
-                            <th>Ville</th>
+                            <th>Pays</th>
                             <th>Statut</th>
                             <th>Actions</th>
                         </tr>
@@ -60,10 +61,8 @@ require_once __DIR__ . '/../layouts/header.php';
                         <tr>
                             <td><?= $row['id'] ?></td>
                             <td><strong><?= htmlspecialchars($row['nom']) ?></strong></td>
-                            <td><?= htmlspecialchars($row['contact'] ?? '-') ?></td>
                             <td><?= htmlspecialchars($row['telephone'] ?? '-') ?></td>
-                            <td><?= htmlspecialchars($row['email'] ?? '-') ?></td>
-                            <td><?= htmlspecialchars($row['ville'] ?? '-') ?></td>
+                            <td><?= htmlspecialchars($row['pays'] ?? '-') ?></td>
                             <td>
                                 <?php if ($row['statut'] == 'actif'): ?>
                                     <span class="badge bg-success">Actif</span>

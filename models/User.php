@@ -13,7 +13,7 @@ class User {
             'fournisseur' => ['view' => true, 'create' => true, 'edit' => true, 'delete' => true],
             'rapport' => ['view' => true, 'create' => true, 'edit' => true, 'delete' => true],
             'alert' => ['view' => true, 'create' => true, 'edit' => true, 'delete' => true],
-            'personnel' => ['view' => true, 'create' => true, 'edit' => true, 'delete' => true],
+            'user' => ['view' => true, 'create' => true, 'edit' => true, 'delete' => true],
             'parametre' => ['view' => true, 'create' => true, 'edit' => true, 'delete' => true],
         ],
         'vendeur' => [
@@ -26,7 +26,7 @@ class User {
             'fournisseur' => ['view' => false, 'create' => false, 'edit' => false, 'delete' => false],
             'rapport' => ['view' => false, 'create' => false, 'edit' => false, 'delete' => false],
             'alert' => ['view' => true, 'create' => false, 'edit' => false, 'delete' => false],
-            'personnel' => ['view' => false, 'create' => false, 'edit' => false, 'delete' => false],
+            'user' => ['view' => false, 'create' => false, 'edit' => false, 'delete' => false],
             'parametre' => ['view' => false, 'create' => false, 'edit' => false, 'delete' => false],
         ],
         'comptable' => [
@@ -39,7 +39,7 @@ class User {
             'fournisseur' => ['view' => true, 'create' => false, 'edit' => false, 'delete' => false],
             'rapport' => ['view' => true, 'create' => true, 'edit' => true, 'delete' => false],
             'alert' => ['view' => true, 'create' => false, 'edit' => false, 'delete' => false],
-            'personnel' => ['view' => false, 'create' => false, 'edit' => false, 'delete' => false],
+            'user' => ['view' => false, 'create' => false, 'edit' => false, 'delete' => false],
             'parametre' => ['view' => false, 'create' => false, 'edit' => false, 'delete' => false],
         ],
     ];
@@ -65,7 +65,7 @@ class User {
     }
     
     public function getAll() {
-        $stmt = $this->db->query("SELECT id, matricule, nom, prenom, email, telephone, poste, role, statut, date_embauche, salaire, derniere_connexion FROM utilisateurs ORDER BY nom, prenom");
+        $stmt = $this->db->query("SELECT id, nom, prenom, email, telephone, username, role, statut, derniere_connexion FROM utilisateurs ORDER BY nom, prenom");
         return $stmt->fetchAll();
     }
     
@@ -77,28 +77,23 @@ class User {
     
     public function create($data) {
         $stmt = $this->db->prepare("INSERT INTO utilisateurs 
-            (matricule, nom, prenom, email, telephone, adresse, date_naissance, date_embauche, 
-             poste, salaire, username, password_hash, role, statut) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            (nom, prenom, telephone, email, username, password_hash, role, statut) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
         
         $passwordHash = password_hash($data['password'], PASSWORD_DEFAULT);
         
         return $stmt->execute([
-            $data['matricule'], $data['nom'], $data['prenom'], $data['email'], 
-            $data['telephone'], $data['adresse'], $data['date_naissance'], 
-            $data['date_embauche'], $data['poste'], $data['salaire'],
+            $data['nom'], $data['prenom'], $data['telephone'], $data['email'],
             $data['username'], $passwordHash, $data['role'], $data['statut'] ?? 'actif'
         ]);
     }
     
     public function update($id, $data) {
         $stmt = $this->db->prepare("UPDATE utilisateurs SET 
-            nom = ?, prenom = ?, email = ?, telephone = ?, adresse = ?,
-            poste = ?, salaire = ?, role = ?, statut = ? WHERE id = ?");
+            nom = ?, prenom = ?, email = ?, telephone = ?, username = ?, role = ?, statut = ? WHERE id = ?");
         return $stmt->execute([
             $data['nom'], $data['prenom'], $data['email'], $data['telephone'],
-            $data['adresse'], $data['poste'], $data['salaire'], $data['role'], 
-            $data['statut'], $id
+            $data['username'], $data['role'], $data['statut'], $id
         ]);
     }
     

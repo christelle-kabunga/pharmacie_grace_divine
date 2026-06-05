@@ -22,23 +22,18 @@ class Fournisseur {
     
     public function create($data) {
         $stmt = $this->db->prepare("INSERT INTO fournisseurs 
-            (nom, contact, telephone, email, adresse, pays, ville, nif, statut) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            (nom, telephone, pays, statut) 
+            VALUES (?, ?, ?, ?)");
         return $stmt->execute([
-            $data['nom'], $data['contact'], $data['telephone'], $data['email'],
-            $data['adresse'], $data['pays'], $data['ville'], $data['nif'],
-            $data['statut'] ?? 'actif'
+            $data['nom'], $data['telephone'], $data['pays'], $data['statut'] ?? 'actif'
         ]);
     }
     
     public function update($id, $data) {
         $stmt = $this->db->prepare("UPDATE fournisseurs SET 
-            nom = ?, contact = ?, telephone = ?, email = ?, adresse = ?,
-            pays = ?, ville = ?, nif = ?, statut = ? WHERE id = ?");
+            nom = ?, telephone = ?, pays = ?, statut = ? WHERE id = ?");
         return $stmt->execute([
-            $data['nom'], $data['contact'], $data['telephone'], $data['email'],
-            $data['adresse'], $data['pays'], $data['ville'], $data['nif'],
-            $data['statut'], $id
+            $data['nom'], $data['telephone'], $data['pays'], $data['statut'], $id
         ]);
     }
     
@@ -58,10 +53,10 @@ class Fournisseur {
     
     public function search($keyword) {
         $stmt = $this->db->prepare("SELECT * FROM fournisseurs 
-            WHERE nom LIKE ? OR contact LIKE ? OR telephone LIKE ? OR email LIKE ? OR ville LIKE ?
+            WHERE nom LIKE ? OR telephone LIKE ? OR pays LIKE ?
             ORDER BY nom");
         $like = "%{$keyword}%";
-        $stmt->execute([$like, $like, $like, $like, $like]);
+        $stmt->execute([$like, $like, $like]);
         return $stmt->fetchAll();
     }
 }

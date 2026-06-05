@@ -18,13 +18,8 @@ class FournisseurController {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = [
                 'nom' => htmlspecialchars(strip_tags($_POST['nom'])),
-                'contact' => htmlspecialchars(strip_tags($_POST['contact'] ?? '')),
                 'telephone' => htmlspecialchars(strip_tags($_POST['telephone'] ?? '')),
-                'email' => htmlspecialchars(strip_tags($_POST['email'] ?? '')),
-                'adresse' => htmlspecialchars(strip_tags($_POST['adresse'] ?? '')),
                 'pays' => htmlspecialchars(strip_tags($_POST['pays'] ?? '')),
-                'ville' => htmlspecialchars(strip_tags($_POST['ville'] ?? '')),
-                'nif' => htmlspecialchars(strip_tags($_POST['nif'] ?? '')),
                 'statut' => htmlspecialchars(strip_tags($_POST['statut'] ?? 'actif'))
             ];
             
@@ -50,13 +45,8 @@ class FournisseurController {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = [
                 'nom' => htmlspecialchars(strip_tags($_POST['nom'])),
-                'contact' => htmlspecialchars(strip_tags($_POST['contact'] ?? '')),
                 'telephone' => htmlspecialchars(strip_tags($_POST['telephone'] ?? '')),
-                'email' => htmlspecialchars(strip_tags($_POST['email'] ?? '')),
-                'adresse' => htmlspecialchars(strip_tags($_POST['adresse'] ?? '')),
                 'pays' => htmlspecialchars(strip_tags($_POST['pays'] ?? '')),
-                'ville' => htmlspecialchars(strip_tags($_POST['ville'] ?? '')),
-                'nif' => htmlspecialchars(strip_tags($_POST['nif'] ?? '')),
                 'statut' => htmlspecialchars(strip_tags($_POST['statut'] ?? 'actif'))
             ];
             

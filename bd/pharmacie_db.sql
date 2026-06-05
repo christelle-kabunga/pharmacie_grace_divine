@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : lun. 01 juin 2026 à 14:41
+-- Généré le : ven. 05 juin 2026 à 21:51
 -- Version du serveur : 10.4.28-MariaDB
 -- Version de PHP : 8.2.4
 
@@ -18,24 +18,23 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de données : `pharmacie_db_v2`
+-- Base de données : `pharmacie_db`
 --
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `alertes`
+-- Structure de la table `caisse`
 --
 
-CREATE TABLE `alertes` (
+CREATE TABLE `caisse` (
   `id` int(11) NOT NULL,
-  `type_alerte` enum('rupture','expiration','seuil_bas','peremption_proche','surstock') NOT NULL,
-  `medicament_id` int(11) DEFAULT NULL,
-  `message` text NOT NULL,
-  `statut` enum('nouvelle','lue','resolue','ignoree') DEFAULT 'nouvelle',
-  `date_creation` timestamp NOT NULL DEFAULT current_timestamp(),
-  `date_resolution` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `type_operation` enum('vente','depense','approvisionnement') NOT NULL,
+  `montant` decimal(10,2) NOT NULL,
+  `description` text DEFAULT NULL,
+  `utilisateur_id` int(11) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -78,30 +77,7 @@ CREATE TABLE `details_vente` (
   `medicament_id` int(11) NOT NULL,
   `quantite` int(11) NOT NULL,
   `prix_unitaire` decimal(10,2) NOT NULL,
-  `remise_ligne` decimal(10,2) DEFAULT 0.00,
-  `total_ligne` decimal(10,2) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Structure de la table `entrees_stock`
---
-
-CREATE TABLE `entrees_stock` (
-  `id` int(11) NOT NULL,
-  `numero_entree` varchar(20) DEFAULT NULL,
-  `fournisseur_id` int(11) DEFAULT NULL,
-  `medicament_id` int(11) NOT NULL,
-  `quantite` int(11) NOT NULL,
-  `prix_achat_unitaire` decimal(10,2) NOT NULL,
-  `prix_vente_unitaire` decimal(10,2) NOT NULL,
-  `date_fabrication` date DEFAULT NULL,
-  `date_expiration` date DEFAULT NULL,
-  `numero_lot` varchar(50) DEFAULT NULL,
-  `date_entree` datetime DEFAULT current_timestamp(),
-  `responsable_id` int(11) DEFAULT NULL,
-  `notes` text DEFAULT NULL
+  `sous_total` decimal(10,0) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -114,17 +90,8 @@ CREATE TABLE `factures` (
   `id` int(11) NOT NULL,
   `numero_facture` varchar(20) NOT NULL,
   `vente_id` int(11) DEFAULT NULL,
-  `nom_client` varchar(150) DEFAULT NULL,
-  `telephone_client` varchar(20) DEFAULT NULL,
   `vendeur_id` int(11) NOT NULL,
-  `date_facture` datetime DEFAULT current_timestamp(),
-  `date_echeance` date DEFAULT NULL,
-  `montant_ht` decimal(10,2) NOT NULL,
-  `montant_ttc` decimal(10,2) NOT NULL,
   `montant_paye` decimal(10,2) DEFAULT 0.00,
-  `statut` enum('en_attente','payee','partielle','impayee','annulee') DEFAULT 'en_attente',
-  `conditions_paiement` text DEFAULT NULL,
-  `notes` text DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -137,14 +104,8 @@ CREATE TABLE `factures` (
 CREATE TABLE `fournisseurs` (
   `id` int(11) NOT NULL,
   `nom` varchar(150) NOT NULL,
-  `contact` varchar(100) DEFAULT NULL,
   `telephone` varchar(20) DEFAULT NULL,
-  `email` varchar(150) DEFAULT NULL,
-  `adresse` text DEFAULT NULL,
   `pays` varchar(50) DEFAULT NULL,
-  `ville` varchar(50) DEFAULT NULL,
-  `nif` varchar(50) DEFAULT NULL,
-  `statut` enum('actif','inactif') DEFAULT 'actif',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -158,11 +119,8 @@ CREATE TABLE `historique_actions` (
   `id` int(11) NOT NULL,
   `utilisateur_id` int(11) DEFAULT NULL,
   `action` varchar(100) NOT NULL,
-  `table_concernee` varchar(50) DEFAULT NULL,
-  `id_enregistrement` int(11) DEFAULT NULL,
   `details_avant` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`details_avant`)),
   `details_apres` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`details_apres`)),
-  `adresse_ip` varchar(45) DEFAULT NULL,
   `date_action` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -183,14 +141,9 @@ CREATE TABLE `medicaments` (
   `quantite_stock` int(11) NOT NULL DEFAULT 0,
   `quantite_minimale` int(11) NOT NULL DEFAULT 10,
   `quantite_maximale` int(11) DEFAULT 1000,
-  `emplacement` varchar(50) DEFAULT NULL,
-  `date_fabrication` date DEFAULT NULL,
   `date_expiration` date NOT NULL,
-  `numero_lot` varchar(50) DEFAULT NULL,
+  `jours_alerte_expiration` int(11) NOT NULL,
   `description` text DEFAULT NULL,
-  `contre_indication` text DEFAULT NULL,
-  `effets_secondaires` text DEFAULT NULL,
-  `statut` enum('actif','inactif','epuise','perime') DEFAULT 'actif',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -245,45 +198,15 @@ INSERT INTO `parametres_systeme` (`id`, `cle`, `valeur`, `description`, `updated
 -- --------------------------------------------------------
 
 --
--- Structure de la table `taux_change`
---
-
-CREATE TABLE `taux_change` (
-  `id` int(11) NOT NULL,
-  `devise` varchar(10) NOT NULL DEFAULT 'CDF',
-  `taux` decimal(10,4) NOT NULL DEFAULT 1.0000,
-  `date_taux` date NOT NULL DEFAULT curdate(),
-  `actif` tinyint(1) DEFAULT 1,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Déchargement des données de la table `taux_change`
---
-
-INSERT INTO `taux_change` (`id`, `devise`, `taux`, `date_taux`, `actif`, `created_at`) VALUES
-(1, 'CDF', 1.0000, '2026-05-31', 1, '2026-05-31 19:03:25'),
-(2, 'USD', 2800.0000, '2026-05-31', 1, '2026-05-31 19:03:25'),
-(3, 'EUR', 3000.0000, '2026-05-31', 1, '2026-05-31 19:03:25');
-
--- --------------------------------------------------------
-
---
 -- Structure de la table `utilisateurs`
 --
 
 CREATE TABLE `utilisateurs` (
   `id` int(11) NOT NULL,
-  `matricule` varchar(20) NOT NULL,
   `nom` varchar(100) NOT NULL,
   `prenom` varchar(100) NOT NULL,
-  `email` varchar(150) DEFAULT NULL,
   `telephone` varchar(20) DEFAULT NULL,
-  `adresse` text DEFAULT NULL,
-  `date_naissance` date DEFAULT NULL,
-  `date_embauche` date NOT NULL DEFAULT curdate(),
-  `poste` enum('admin','vendeur','comptable') NOT NULL DEFAULT 'vendeur',
-  `salaire` decimal(10,2) DEFAULT 0.00,
+  `email` varchar(150) DEFAULT NULL,
   `username` varchar(50) NOT NULL,
   `password_hash` varchar(255) NOT NULL,
   `role` enum('admin','vendeur','comptable') NOT NULL DEFAULT 'vendeur',
@@ -297,10 +220,10 @@ CREATE TABLE `utilisateurs` (
 -- Déchargement des données de la table `utilisateurs`
 --
 
-INSERT INTO `utilisateurs` (`id`, `matricule`, `nom`, `prenom`, `email`, `telephone`, `adresse`, `date_naissance`, `date_embauche`, `poste`, `salaire`, `username`, `password_hash`, `role`, `statut`, `derniere_connexion`, `created_at`, `updated_at`) VALUES
-(1, 'ADMIN001', 'Administrateur', 'Système', 'admin@pharmacie.com', '+243999999999', NULL, NULL, '2026-05-31', 'admin', 500000.00, 'admin', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin', 'actif', NULL, '2026-05-31 19:03:25', '2026-05-31 19:03:25'),
-(2, 'VEND001', 'Kasongo', 'Jean', 'vendeur@pharmacie.com', '+243888888888', NULL, NULL, '2026-05-31', 'vendeur', 250000.00, 'vendeur', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'vendeur', 'actif', NULL, '2026-05-31 19:03:25', '2026-05-31 19:03:25'),
-(3, 'COMP001', 'Mukendi', 'Marie', 'comptable@pharmacie.com', '+243777777777', NULL, NULL, '2026-05-31', 'comptable', 350000.00, 'comptable', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'comptable', 'actif', NULL, '2026-05-31 19:03:25', '2026-05-31 19:03:25');
+INSERT INTO `utilisateurs` (`id`, `nom`, `prenom`, `telephone`, `email`, `username`, `password_hash`, `role`, `statut`, `derniere_connexion`, `created_at`, `updated_at`) VALUES
+(1, 'Administrateur', 'Système', '+243999999999', 'admin@pharmacie.com', 'admin', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin', 'actif', NULL, '2026-05-31 19:03:25', '2026-05-31 19:03:25'),
+(2, 'Kasongo', 'Jean', '+243888888888', 'vendeur@pharmacie.com', 'vendeur', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'vendeur', 'actif', NULL, '2026-05-31 19:03:25', '2026-05-31 19:03:25'),
+(3, 'Mukendi', 'Marie', '+243777777777', 'comptable@pharmacie.com', 'comptable', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'comptable', 'actif', NULL, '2026-05-31 19:03:25', '2026-05-31 19:03:25');
 
 -- --------------------------------------------------------
 
@@ -310,19 +233,9 @@ INSERT INTO `utilisateurs` (`id`, `matricule`, `nom`, `prenom`, `email`, `teleph
 
 CREATE TABLE `ventes` (
   `id` int(11) NOT NULL,
-  `numero_vente` varchar(20) NOT NULL,
-  `nom_client` varchar(150) DEFAULT NULL,
-  `telephone_client` varchar(20) DEFAULT NULL,
+  `numero_vente` varchar(50) NOT NULL,
   `vendeur_id` int(11) NOT NULL,
-  `date_vente` datetime DEFAULT current_timestamp(),
-  `sous_total` decimal(10,2) NOT NULL DEFAULT 0.00,
-  `remise_totale` decimal(10,2) DEFAULT 0.00,
   `total_final` decimal(10,2) NOT NULL DEFAULT 0.00,
-  `montant_paye` decimal(10,2) DEFAULT 0.00,
-  `monnaie_rendue` decimal(10,2) DEFAULT 0.00,
-  `mode_paiement` enum('especes','carte','cheque','virement','mobile_money') DEFAULT 'especes',
-  `devise` varchar(10) DEFAULT 'CDF',
-  `taux_id` int(11) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -331,11 +244,11 @@ CREATE TABLE `ventes` (
 --
 
 --
--- Index pour la table `alertes`
+-- Index pour la table `caisse`
 --
-ALTER TABLE `alertes`
+ALTER TABLE `caisse`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `medicament_id` (`medicament_id`);
+  ADD KEY `utilisateur_id` (`utilisateur_id`);
 
 --
 -- Index pour la table `categories_medicament`
@@ -350,16 +263,6 @@ ALTER TABLE `details_vente`
   ADD PRIMARY KEY (`id`),
   ADD KEY `vente_id` (`vente_id`),
   ADD KEY `medicament_id` (`medicament_id`);
-
---
--- Index pour la table `entrees_stock`
---
-ALTER TABLE `entrees_stock`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `numero_entree` (`numero_entree`),
-  ADD KEY `fournisseur_id` (`fournisseur_id`),
-  ADD KEY `medicament_id` (`medicament_id`),
-  ADD KEY `responsable_id` (`responsable_id`);
 
 --
 -- Index pour la table `factures`
@@ -384,14 +287,6 @@ ALTER TABLE `historique_actions`
   ADD KEY `utilisateur_id` (`utilisateur_id`);
 
 --
--- Index pour la table `medicaments`
---
-ALTER TABLE `medicaments`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `categorie_id` (`categorie_id`),
-  ADD KEY `fournisseur_id` (`fournisseur_id`);
-
---
 -- Index pour la table `mouvements_stock`
 --
 ALTER TABLE `mouvements_stock`
@@ -407,18 +302,10 @@ ALTER TABLE `parametres_systeme`
   ADD UNIQUE KEY `cle` (`cle`);
 
 --
--- Index pour la table `taux_change`
---
-ALTER TABLE `taux_change`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `uk_devise_date` (`devise`,`date_taux`);
-
---
 -- Index pour la table `utilisateurs`
 --
 ALTER TABLE `utilisateurs`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `matricule` (`matricule`),
   ADD UNIQUE KEY `username` (`username`),
   ADD UNIQUE KEY `email` (`email`);
 
@@ -427,18 +314,16 @@ ALTER TABLE `utilisateurs`
 --
 ALTER TABLE `ventes`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `numero_vente` (`numero_vente`),
-  ADD KEY `vendeur_id` (`vendeur_id`),
-  ADD KEY `taux_id` (`taux_id`);
+  ADD KEY `vendeur_id` (`vendeur_id`);
 
 --
 -- AUTO_INCREMENT pour les tables déchargées
 --
 
 --
--- AUTO_INCREMENT pour la table `alertes`
+-- AUTO_INCREMENT pour la table `caisse`
 --
-ALTER TABLE `alertes`
+ALTER TABLE `caisse`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
@@ -451,12 +336,6 @@ ALTER TABLE `categories_medicament`
 -- AUTO_INCREMENT pour la table `details_vente`
 --
 ALTER TABLE `details_vente`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT pour la table `entrees_stock`
---
-ALTER TABLE `entrees_stock`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
@@ -478,12 +357,6 @@ ALTER TABLE `historique_actions`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT pour la table `medicaments`
---
-ALTER TABLE `medicaments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT pour la table `mouvements_stock`
 --
 ALTER TABLE `mouvements_stock`
@@ -494,12 +367,6 @@ ALTER TABLE `mouvements_stock`
 --
 ALTER TABLE `parametres_systeme`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
-
---
--- AUTO_INCREMENT pour la table `taux_change`
---
-ALTER TABLE `taux_change`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT pour la table `utilisateurs`
@@ -518,25 +385,10 @@ ALTER TABLE `ventes`
 --
 
 --
--- Contraintes pour la table `alertes`
+-- Contraintes pour la table `caisse`
 --
-ALTER TABLE `alertes`
-  ADD CONSTRAINT `alertes_ibfk_1` FOREIGN KEY (`medicament_id`) REFERENCES `medicaments` (`id`);
-
---
--- Contraintes pour la table `details_vente`
---
-ALTER TABLE `details_vente`
-  ADD CONSTRAINT `details_vente_ibfk_1` FOREIGN KEY (`vente_id`) REFERENCES `ventes` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `details_vente_ibfk_2` FOREIGN KEY (`medicament_id`) REFERENCES `medicaments` (`id`);
-
---
--- Contraintes pour la table `entrees_stock`
---
-ALTER TABLE `entrees_stock`
-  ADD CONSTRAINT `entrees_stock_ibfk_1` FOREIGN KEY (`fournisseur_id`) REFERENCES `fournisseurs` (`id`),
-  ADD CONSTRAINT `entrees_stock_ibfk_2` FOREIGN KEY (`medicament_id`) REFERENCES `medicaments` (`id`),
-  ADD CONSTRAINT `entrees_stock_ibfk_3` FOREIGN KEY (`responsable_id`) REFERENCES `utilisateurs` (`id`);
+ALTER TABLE `caisse`
+  ADD CONSTRAINT `caisse_ibfk_1` FOREIGN KEY (`utilisateur_id`) REFERENCES `utilisateurs` (`id`);
 
 --
 -- Contraintes pour la table `factures`
@@ -550,27 +402,6 @@ ALTER TABLE `factures`
 --
 ALTER TABLE `historique_actions`
   ADD CONSTRAINT `historique_actions_ibfk_1` FOREIGN KEY (`utilisateur_id`) REFERENCES `utilisateurs` (`id`);
-
---
--- Contraintes pour la table `medicaments`
---
-ALTER TABLE `medicaments`
-  ADD CONSTRAINT `medicaments_ibfk_1` FOREIGN KEY (`categorie_id`) REFERENCES `categories_medicament` (`id`),
-  ADD CONSTRAINT `medicaments_ibfk_2` FOREIGN KEY (`fournisseur_id`) REFERENCES `fournisseurs` (`id`);
-
---
--- Contraintes pour la table `mouvements_stock`
---
-ALTER TABLE `mouvements_stock`
-  ADD CONSTRAINT `mouvements_stock_ibfk_1` FOREIGN KEY (`medicament_id`) REFERENCES `medicaments` (`id`),
-  ADD CONSTRAINT `mouvements_stock_ibfk_2` FOREIGN KEY (`utilisateur_id`) REFERENCES `utilisateurs` (`id`);
-
---
--- Contraintes pour la table `ventes`
---
-ALTER TABLE `ventes`
-  ADD CONSTRAINT `ventes_ibfk_1` FOREIGN KEY (`vendeur_id`) REFERENCES `utilisateurs` (`id`),
-  ADD CONSTRAINT `ventes_ibfk_2` FOREIGN KEY (`taux_id`) REFERENCES `taux_change` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
