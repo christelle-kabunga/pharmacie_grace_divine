@@ -18,19 +18,14 @@ class FournisseurController {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = [
                 'nom' => htmlspecialchars(strip_tags($_POST['nom'])),
-                'contact' => htmlspecialchars(strip_tags($_POST['contact'] ?? '')),
                 'telephone' => htmlspecialchars(strip_tags($_POST['telephone'] ?? '')),
-                'email' => htmlspecialchars(strip_tags($_POST['email'] ?? '')),
                 'adresse' => htmlspecialchars(strip_tags($_POST['adresse'] ?? '')),
-                'pays' => htmlspecialchars(strip_tags($_POST['pays'] ?? '')),
-                'ville' => htmlspecialchars(strip_tags($_POST['ville'] ?? '')),
-                'nif' => htmlspecialchars(strip_tags($_POST['nif'] ?? '')),
-                'statut' => htmlspecialchars(strip_tags($_POST['statut'] ?? 'actif'))
+                'pays' => htmlspecialchars(strip_tags($_POST['pays'] ?? ''))
             ];
             
             if ($this->model->create($data)) {
                 $_SESSION['success'] = "Fournisseur ajouté avec succès.";
-                header('Location: index.php?page=fournisseurs');
+                header('Location: index.php?page=fournisseur');
                 exit;
             } else {
                 $_SESSION['error'] = "Erreur lors de l'ajout.";
@@ -43,26 +38,21 @@ class FournisseurController {
         $fournisseur = $this->model->getById($id);
         if (!$fournisseur) {
             $_SESSION['error'] = "Fournisseur introuvable.";
-            header('Location: index.php?page=fournisseurs');
+            header('Location: index.php?page=fournisseur');
             exit;
         }
         
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = [
                 'nom' => htmlspecialchars(strip_tags($_POST['nom'])),
-                'contact' => htmlspecialchars(strip_tags($_POST['contact'] ?? '')),
                 'telephone' => htmlspecialchars(strip_tags($_POST['telephone'] ?? '')),
-                'email' => htmlspecialchars(strip_tags($_POST['email'] ?? '')),
                 'adresse' => htmlspecialchars(strip_tags($_POST['adresse'] ?? '')),
-                'pays' => htmlspecialchars(strip_tags($_POST['pays'] ?? '')),
-                'ville' => htmlspecialchars(strip_tags($_POST['ville'] ?? '')),
-                'nif' => htmlspecialchars(strip_tags($_POST['nif'] ?? '')),
-                'statut' => htmlspecialchars(strip_tags($_POST['statut'] ?? 'actif'))
+                'pays' => htmlspecialchars(strip_tags($_POST['pays'] ?? ''))
             ];
             
             if ($this->model->update($id, $data)) {
                 $_SESSION['success'] = "Fournisseur modifié avec succès.";
-                header('Location: index.php?page=fournisseurs');
+                header('Location: index.php?page=fournisseur');
                 exit;
             } else {
                 $_SESSION['error'] = "Erreur lors de la modification.";
@@ -77,26 +67,25 @@ class FournisseurController {
         } else {
             $_SESSION['error'] = "Erreur lors de la suppression.";
         }
-        header('Location: index.php?page=fournisseurs');
+        header('Location: index.php?page=fournisseur');
         exit;
     }
     
     public function toggle($id) {
-        $fournisseur = $this->model->getById($id);
-        if ($fournisseur) {
-            $newStatut = $fournisseur['statut'] == 'actif' ? 'inactif' : 'actif';
-            $this->model->toggleStatut($id, $newStatut);
-            $_SESSION['success'] = "Statut modifié.";
-        }
-        header('Location: index.php?page=fournisseurs');
+        $_SESSION['error'] = "Le statut des fournisseurs n'est plus géré dans cette version.";
+        header('Location: index.php?page=fournisseur');
         exit;
+    }
+
+    public function toggleStatut($id) {
+        $this->toggle($id);
     }
     
     public function view($id) {
         $fournisseur = $this->model->getById($id);
         if (!$fournisseur) {
             $_SESSION['error'] = "Fournisseur introuvable.";
-            header('Location: index.php?page=fournisseurs');
+            header('Location: index.php?page=fournisseur');
             exit;
         }
         require_once __DIR__ . '/../views/fournisseurs/view.php';
