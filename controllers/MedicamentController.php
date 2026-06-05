@@ -30,7 +30,7 @@ class MedicamentController {
         }
         
         $categories = $this->db->query("SELECT * FROM categories_medicament ORDER BY nom")->fetchAll();
-        $fournisseurs = $this->db->query("SELECT * FROM fournisseurs WHERE statut = 'actif' ORDER BY nom")->fetchAll();
+        $fournisseurs = $this->db->query("SELECT * FROM fournisseurs ORDER BY nom")->fetchAll();
         $title = 'Nouveau Médicament';
         require 'views/medicaments/nouveau.php';
     }
@@ -60,7 +60,7 @@ class MedicamentController {
         $id = $_GET['id'] ?? 0;
         $medicament = $this->medicamentModel->getById($id);
         $categories = $this->db->query("SELECT * FROM categories_medicament ORDER BY nom")->fetchAll();
-        $fournisseurs = $this->db->query("SELECT * FROM fournisseurs WHERE statut = 'actif' ORDER BY nom")->fetchAll();
+        $fournisseurs = $this->db->query("SELECT * FROM fournisseurs ORDER BY nom")->fetchAll();
         $title = 'Modifier Médicament';
         require 'views/medicaments/edit.php';
     }

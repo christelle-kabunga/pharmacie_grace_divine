@@ -30,7 +30,7 @@ class StockController {
         }
         
         $medicaments = $this->db->query("SELECT id, nom_generique FROM medicaments ORDER BY nom_generique")->fetchAll();
-        $fournisseurs = $this->db->query("SELECT id, nom FROM fournisseurs WHERE statut = 'actif'")->fetchAll();
+        $fournisseurs = $this->db->query("SELECT id, nom FROM fournisseurs ORDER BY nom")->fetchAll();
         $title = 'Entrée de Stock';
         require 'views/stock/entree.php';
     }
