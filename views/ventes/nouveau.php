@@ -2,6 +2,9 @@
 require 'views/templates/header.php';
 require 'views/templates/sidebar.php';
 require 'views/templates/navbar.php';
+
+$medicaments = $medicaments ?? [];
+$taux = $taux ?? [];
 ?>
 
 <div class="main-content">
@@ -36,19 +39,8 @@ require 'views/templates/navbar.php';
                                         <option value="mobile_money">Mobile Money</option>
                                     </select>
                                 </div>
-                                <div class="col-md-4">
-                                    <label class="form-label">Devise *</label>
-                                    <select name="devise" class="form-select" id="deviseSelect" required>
-                                        <?php foreach ($taux as $t): ?>
-                                            <option value="<?= $t['devise'] ?>" data-taux="<?= $t['id'] ?>" data-taux-val="<?= $t['taux'] ?>"><?= $t['devise'] ?> (<?= number_format($t['taux'], 2) ?>)</option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                    <input type="hidden" name="taux_id" id="tauxId" value="<?= $taux[0]['id'] ?? '' ?>">
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label">Taux appliqué</label>
-                                    <input type="text" class="form-control" id="tauxDisplay" value="<?= number_format($taux[0]['taux'] ?? 1, 2) ?>" readonly>
-                                </div>
+                                <input type="hidden" name="devise" value="CDF">
+                                <input type="hidden" name="taux_id" value="">
                             </div>
                         </div>
                     </div>
@@ -122,9 +114,6 @@ require 'views/templates/navbar.php';
 
 <script>
 const medicaments = <?= json_encode($medicaments) ?>;
-const tauxList = <?= json_encode($taux) ?>;
-const tauxMap = {};
-tauxList.forEach(t => tauxMap[t.devise] = parseFloat(t.taux));
 let ligneIndex = 0;
 
 function ajouterLigne() {
@@ -156,13 +145,6 @@ function updatePrix(select) {
     calculerTotal();
 }
 
-// Gestion devise/taux
-document.getElementById('deviseSelect').addEventListener('change', function() {
-    const option = this.selectedOptions[0];
-    document.getElementById('tauxId').value = option.dataset.taux;
-    document.getElementById('tauxDisplay').value = parseFloat(option.dataset.tauxVal).toFixed(2);
-});
-
 // Calcul monnaie
 function calculerTotal() {
     let sous = 0;
@@ -182,29 +164,6 @@ function calculerTotal() {
     const totalFinal = Math.max(0, sous - remiseGlob);
     document.getElementById('totalFinal').textContent = totalFinal.toFixed(2);
 
-    // conversion affichage: always show both CDF and USD
-    const selectedDev = document.getElementById('deviseSelect').value;
-    const usdRate = tauxMap['USD'] || 1;
-    let totalCDF = 0, totalUSD = 0;
-    if (selectedDev === 'USD') {
-        totalUSD = totalFinal;
-        totalCDF = totalFinal * usdRate;
-    } else {
-        totalCDF = totalFinal;
-        totalUSD = usdRate ? (totalFinal / usdRate) : 0;
-    }
-
-    // show alt totals (append small text under total)
-    let alt = document.getElementById('altTotals');
-    if (!alt) {
-        alt = document.createElement('div');
-        alt.id = 'altTotals';
-        alt.className = 'text-muted small mt-1';
-        document.getElementById('totalFinal').parentNode.appendChild(alt);
-    }
-    alt.textContent = `= ${totalCDF.toFixed(2)} CDF  /  ${totalUSD.toFixed(2)} USD`;
-
-    // update monnaie rendu when montant payé present
     const payeInp = document.getElementById('montantPaye');
     const paye = parseFloat(payeInp.value) || 0;
     document.getElementById('monnaie').value = (paye - totalFinal).toFixed(2);
@@ -212,11 +171,6 @@ function calculerTotal() {
 
 // update monnaie on input
 document.getElementById('montantPaye').addEventListener('input', function() {
-    calculerTotal();
-});
-
-// recalc when taux/devise changes
-document.getElementById('deviseSelect').addEventListener('change', function() {
     calculerTotal();
 });
 

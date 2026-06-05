@@ -1,6 +1,14 @@
 <?php
 $pageTitle = "Modifier Fournisseur";
 require_once __DIR__ . '/../layouts/header.php';
+
+$fournisseur = $fournisseur ?? [
+    'id' => '',
+    'nom' => '',
+    'telephone' => '',
+    'pays' => '',
+    'statut' => 'inactif'
+];
 ?>
 
 <div class="container-fluid">

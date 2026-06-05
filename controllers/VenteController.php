@@ -35,9 +35,6 @@ class VenteController {
                                          FROM medicaments 
                                          WHERE statut = 'actif' AND quantite_stock > 0")->fetchAll();
         
-        // Récupérer le taux du jour
-        $taux = $this->db->query("SELECT * FROM taux_change WHERE actif = 1 ORDER BY date_taux DESC")->fetchAll();
-        
         $title = 'Nouvelle Vente';
         require 'views/ventes/nouveau.php';
     }
@@ -61,8 +58,8 @@ class VenteController {
             
             $stmt = $this->db->prepare("INSERT INTO ventes 
                 (numero_vente, nom_client, telephone_client, vendeur_id, sous_total, remise_totale, 
-                 total_final, montant_paye, monnaie_rendue, mode_paiement, devise, taux_id) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                 total_final, montant_paye, monnaie_rendue, mode_paiement) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
             
             $sousTotal = floatval($_POST['sous_total']);
             $remise = floatval($_POST['remise_totale'] ?? 0);
@@ -80,9 +77,7 @@ class VenteController {
                 $total,
                 $montantPaye,
                 max(0, $monnaie),
-                $_POST['mode_paiement'],
-                $_POST['devise'] ?? 'CDF',
-                $_POST['taux_id'] ?: null
+                $_POST['mode_paiement']
             ]);
             
             $venteId = $this->db->lastInsertId();
@@ -182,8 +177,18 @@ class VenteController {
     }
     
     private function creerAlerte($type, $medicamentId, $message) {
+        if (!$this->tableExists('alertes')) {
+            return;
+        }
+
         $stmt = $this->db->prepare("INSERT INTO alertes (type_alerte, medicament_id, message) VALUES (?, ?, ?)");
         $stmt->execute([$type, $medicamentId, $message]);
+    }
+
+    private function tableExists($table) {
+        $stmt = $this->db->prepare("SHOW TABLES LIKE ?");
+        $stmt->execute([$table]);
+        return (bool) $stmt->fetchColumn();
     }
 }
 ?>
