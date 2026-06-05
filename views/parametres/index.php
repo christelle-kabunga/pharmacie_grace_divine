@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Paramètres du Système";
-require_once __DIR__ . '/../layouts/header.php';
+require_once __DIR__ . '/../templates/header.php';
 ?>
 
 <div class="container-fluid">
@@ -151,4 +151,4 @@ require_once __DIR__ . '/../layouts/header.php';
     </div>
 </div>
 
-<?php require_once __DIR__ . '/../layouts/footer.php'; ?>
+<?php require_once __DIR__ . '/../templates/footer.php'; ?>

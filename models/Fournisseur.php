@@ -17,34 +17,25 @@ class Fournisseur {
     }
     
     public function getActifs() {
-        return $this->db->query("SELECT * FROM fournisseurs WHERE statut = 'actif' ORDER BY nom")->fetchAll();
+        return $this->db->query("SELECT * FROM fournisseurs ORDER BY nom")->fetchAll();
     }
     
     public function create($data) {
-        $stmt = $this->db->prepare("INSERT INTO fournisseurs 
-            (nom, contact, telephone, email, adresse, pays, ville, nif, statut) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt = $this->db->prepare("INSERT INTO fournisseurs (nom, telephone, adresse, pays) VALUES (?, ?, ?, ?)");
         return $stmt->execute([
-            $data['nom'], $data['contact'], $data['telephone'], $data['email'],
-            $data['adresse'], $data['pays'], $data['ville'], $data['nif'],
-            $data['statut'] ?? 'actif'
+            $data['nom'], $data['telephone'] ?? null, $data['adresse'] ?? null, $data['pays'] ?? null
         ]);
     }
     
     public function update($id, $data) {
-        $stmt = $this->db->prepare("UPDATE fournisseurs SET 
-            nom = ?, contact = ?, telephone = ?, email = ?, adresse = ?,
-            pays = ?, ville = ?, nif = ?, statut = ? WHERE id = ?");
+        $stmt = $this->db->prepare("UPDATE fournisseurs SET nom = ?, telephone = ?, adresse = ?, pays = ? WHERE id = ?");
         return $stmt->execute([
-            $data['nom'], $data['contact'], $data['telephone'], $data['email'],
-            $data['adresse'], $data['pays'], $data['ville'], $data['nif'],
-            $data['statut'], $id
+            $data['nom'], $data['telephone'] ?? null, $data['adresse'] ?? null, $data['pays'] ?? null, $id
         ]);
     }
     
     public function toggleStatut($id, $statut) {
-        $stmt = $this->db->prepare("UPDATE fournisseurs SET statut = ? WHERE id = ?");
-        return $stmt->execute([$statut, $id]);
+        return false;
     }
     
     public function delete($id) {
@@ -58,10 +49,10 @@ class Fournisseur {
     
     public function search($keyword) {
         $stmt = $this->db->prepare("SELECT * FROM fournisseurs 
-            WHERE nom LIKE ? OR contact LIKE ? OR telephone LIKE ? OR email LIKE ? OR ville LIKE ?
+            WHERE nom LIKE ? OR telephone LIKE ? OR adresse LIKE ? OR pays LIKE ?
             ORDER BY nom");
         $like = "%{$keyword}%";
-        $stmt->execute([$like, $like, $like, $like, $like]);
+        $stmt->execute([$like, $like, $like, $like]);
         return $stmt->fetchAll();
     }
 }
