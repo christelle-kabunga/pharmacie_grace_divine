@@ -19,7 +19,7 @@
                     <span class="d-none d-md-block fw-medium"><?= $_SESSION['user_name'] ?? 'Utilisateur' ?></span>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end">
-                    <li><a class="dropdown-item" href="?page=personnel&action=profil"><i class="bi bi-person me-2"></i>Profil</a></li>
+                    <li><a class="dropdown-item" href="?page=user&action=profil"><i class="bi bi-person me-2"></i>Profil</a></li>
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item text-danger" href="?page=auth&action=logout"><i class="bi bi-box-arrow-right me-2"></i>Déconnexion</a></li>
                 </ul>

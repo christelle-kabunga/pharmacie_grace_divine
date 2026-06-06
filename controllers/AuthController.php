@@ -32,8 +32,6 @@ class AuthController {
                     $_SESSION['user_id'] = $user['id'];
                     $_SESSION['user_name'] = $user['prenom'] . ' ' . $user['nom'];
                     $_SESSION['user_role'] = $user['role'];
-                    $_SESSION['user_poste'] = $user['poste'];
-                    $_SESSION['user_matricule'] = $user['matricule'];
                     
                     // Récupérer et stocker les permissions
                     $perms = $this->userModel->getPermissions($user['role']);

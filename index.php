@@ -97,5 +97,18 @@ if (!method_exists($controller, $action)) {
     die("ERREUR: Méthode '$action' inexistante");
 }
 
-$controller->$action();
+$method = new ReflectionMethod($controller, $action);
+$args = [];
+foreach ($method->getParameters() as $param) {
+    $name = $param->getName();
+    if (isset($_GET[$name])) {
+        $args[] = $_GET[$name];
+    } elseif ($param->isDefaultValueAvailable()) {
+        $args[] = $param->getDefaultValue();
+    } else {
+        $args[] = null;
+    }
+}
+
+$controller->$action(...$args);
 ?>

@@ -12,9 +12,10 @@ $allMenus = [
     ['page' => 'facture', 'icon' => 'bi-receipt', 'label' => 'Facturation'],
     ['page' => 'client', 'icon' => 'bi-people', 'label' => 'Clients'],
     ['page' => 'fournisseur', 'icon' => 'bi-truck', 'label' => 'Fournisseurs'],
+    ['page' => 'categorie', 'icon' => 'bi-tags', 'label' => 'Catégories'],
     ['page' => 'rapport', 'icon' => 'bi-graph-up', 'label' => 'Rapports'],
     ['page' => 'alert', 'icon' => 'bi-bell', 'label' => 'Alertes'],
-    ['page' => 'personnel', 'icon' => 'bi-person-badge', 'label' => 'Personnel'],
+    ['page' => 'user', 'icon' => 'bi-person-badge', 'label' => 'Utilisateurs'],
     ['page' => 'parametre', 'icon' => 'bi-gear', 'label' => 'Paramètres'],
 ];
 
