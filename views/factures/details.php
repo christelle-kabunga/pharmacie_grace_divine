@@ -2,6 +2,10 @@
 require 'views/templates/header.php';
 require 'views/templates/sidebar.php';
 require 'views/templates/navbar.php';
+
+$facture = $facture ?? [];
+$details = $details ?? [];
+$devise = $facture['devise'] ?? 'CDF';
 ?>
 
 <div class="main-content">
@@ -27,7 +31,7 @@ require 'views/templates/navbar.php';
                         <h4 class="fw-bold">FACTURE</h4>
                         <p class="mb-1"><strong>N°:</strong> <?= $facture['numero_facture'] ?></p>
                         <p class="mb-1"><strong>Date:</strong> <?= date('d/m/Y', strtotime($facture['date_facture'])) ?></p>
-                        <p><strong>Devise:</strong> <?= $facture['devise'] ?></p>
+                        <p><strong>Devise:</strong> <?= htmlspecialchars($devise) ?></p>
                     </div>
                 </div>
 
@@ -84,36 +88,11 @@ require 'views/templates/navbar.php';
                         <table class="table table-borderless">
                             <tr>
                                 <td class="text-end">Sous-total:</td>
-                                <td class="text-end fw-bold"><?= number_format($facture['sous_total'], 2) ?> <?= $facture['devise'] ?></td>
+                                <td class="text-end fw-bold"><?= number_format($facture['sous_total'] ?? 0, 2) ?> <?= htmlspecialchars($devise) ?></td>
                             </tr>
                             <tr>
                                 <td class="text-end">Remise:</td>
-                                <td class="text-end"><?= number_format($facture['remise_totale'], 2) ?> <?= $facture['devise'] ?></td>
-                            </tr>
-                        </table>
-                    </div>
-                </div>
-
-                <hr class="my-4">
-                <div class="text-center text-muted">
-                    <p class="mb-1">Merci de votre confiance !</p>
-                    <small>Facture émise par <?= $facture['vendeur_prenom'] ?> <?= $facture['vendeur_nom'] ?></small>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<?php require 'views/templates/footer.php'; ?>
-```php
-                            </tr>
-                            <tr class="border-top">
-                                <td class="text-end fs-5 fw-bold">TOTAL:</td>
-                                <td class="text-end fs-5 fw-bold text-primary"><?= number_format($facture['montant_ttc'], 2) ?> <?= $facture['devise'] ?></td>
-                            </tr>
-                            <tr>
-                                <td class="text-end">Montant payé:</td>
-                                <td class="text-end text-success"><?= number_format($facture['montant_paye'], 2) ?> <?= $facture['devise'] ?></td>
+                                <td class="text-end"><?= number_format($facture['remise_totale'] ?? 0, 2) ?> <?= htmlspecialchars($devise) ?></td>
                             </tr>
                         </table>
                     </div>

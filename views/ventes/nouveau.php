@@ -40,6 +40,7 @@ $taux = $taux ?? [];
                                     </select>
                                 </div>
                                 <input type="hidden" name="devise" value="CDF">
+                                <input type="hidden" name="taux_id" value="">
                             </div>
                         </div>
                     </div>
@@ -113,7 +114,6 @@ $taux = $taux ?? [];
 
 <script>
 const medicaments = <?= json_encode($medicaments) ?>;
-const tauxMap = {};
 let ligneIndex = 0;
 
 function ajouterLigne() {
@@ -145,7 +145,6 @@ function updatePrix(select) {
     calculerTotal();
 }
 
-
 // Calcul monnaie
 function calculerTotal() {
     let sous = 0;
@@ -165,9 +164,6 @@ function calculerTotal() {
     const totalFinal = Math.max(0, sous - remiseGlob);
     document.getElementById('totalFinal').textContent = totalFinal.toFixed(2);
 
-    // totals are displayed in local currency (CDF)
-
-    // update monnaie rendu when montant payé present
     const payeInp = document.getElementById('montantPaye');
     const paye = parseFloat(payeInp.value) || 0;
     document.getElementById('monnaie').value = (paye - totalFinal).toFixed(2);
@@ -177,8 +173,6 @@ function calculerTotal() {
 document.getElementById('montantPaye').addEventListener('input', function() {
     calculerTotal();
 });
-
-// initial calc
 
 // ensure at least one ligne and initial calc
 ajouterLigne();

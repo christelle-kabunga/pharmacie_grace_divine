@@ -28,8 +28,8 @@ $ventes = $ventes ?? [];
                             <th>Date</th>
                             <th>Client</th>
                             <th>Vendeur</th>
-                            <th>Total (CDF)</th>
-                            <th>Payé (CDF)</th>
+                            <th>Total</th>
+                            <th>Payé</th>
                             <th>Actions</th>
                         </tr>
                     </thead>

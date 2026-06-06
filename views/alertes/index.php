@@ -2,6 +2,8 @@
 require 'views/templates/header.php';
 require 'views/templates/sidebar.php';
 require 'views/templates/navbar.php';
+
+$alertes = $alertes ?? [];
 ?>
 
 <div class="main-content">
@@ -16,11 +18,14 @@ require 'views/templates/navbar.php';
 
         <div class="row g-4">
             <?php foreach ($alertes as $a): 
-                $icon = $a['type_alerte'] == 'rupture' ? 'exclamation-circle' : ($a['type_alerte'] == 'expiration' ? 'calendar-x' : 'info-circle');
-                $color = $a['type_alerte'] == 'rupture' ? 'danger' : ($a['type_alerte'] == 'expiration' ? 'warning' : 'info');
+                $type = $a['type_alerte'] ?? 'info';
+                $icon = $type == 'rupture' ? 'exclamation-circle' : ($type == 'expiration' ? 'calendar-x' : 'info-circle');
+                $color = $type == 'rupture' ? 'danger' : ($type == 'expiration' ? 'warning' : 'info');
+                $statut = $a['statut'] ?? 'nouvelle';
+                $dateCreation = $a['date_creation'] ?? date('Y-m-d H:i:s');
             ?>
             <div class="col-md-6 col-lg-4">
-                <div class="card border-<?= $color ?> <?= $a['statut'] == 'nouvelle' ? 'alert-nouvelle' : '' ?>">
+                <div class="card border-<?= $color ?> <?= $statut == 'nouvelle' ? 'alert-nouvelle' : '' ?>">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-start">
                             <div class="d-flex gap-3">
@@ -28,26 +33,26 @@ require 'views/templates/navbar.php';
                                     <i class="bi bi-<?= $icon ?>"></i>
                                 </div>
                                 <div>
-                                    <h6 class="mb-1"><?= ucfirst($a['type_alerte']) ?></h6>
-                                    <p class="mb-1 small"><?= $a['message'] ?></p>
-                                    <?php if ($a['nom_commercial']): ?>
+                                    <h6 class="mb-1"><?= ucfirst($type) ?></h6>
+                                    <p class="mb-1 small"><?= $a['message'] ?? 'Alerte système' ?></p>
+                                    <?php if (!empty($a['nom_commercial'])): ?>
                                         <small class="text-muted"><strong><?= $a['nom_commercial'] ?></strong></small><br>
-                                        <?php if ($a['quantite_stock'] !== null): ?>
-                                            <small class="text-danger">Stock: <?= $a['quantite_stock'] ?> / Min: <?= $a['quantite_minimale'] ?></small>
+                                        <?php if (isset($a['quantite_stock'])): ?>
+                                            <small class="text-danger">Stock: <?= $a['quantite_stock'] ?> / Min: <?= $a['quantite_minimale'] ?? '-' ?></small>
                                         <?php endif; ?>
-                                        <?php if ($a['date_expiration']): ?>
+                                        <?php if (!empty($a['date_expiration'])): ?>
                                             <small class="text-warning d-block">Exp: <?= date('d/m/Y', strtotime($a['date_expiration'])) ?></small>
                                         <?php endif; ?>
                                     <?php endif; ?>
                                 </div>
                             </div>
-                            <span class="badge bg-<?= $a['statut'] == 'nouvelle' ? 'danger' : ($a['statut'] == 'resolue' ? 'success' : 'secondary') ?>">
-                                <?= ucfirst($a['statut']) ?>
+                            <span class="badge bg-<?= $statut == 'nouvelle' ? 'danger' : ($statut == 'resolue' ? 'success' : 'secondary') ?>">
+                                <?= ucfirst($statut) ?>
                             </span>
                         </div>
                         <div class="mt-3 d-flex justify-content-between align-items-center">
-                            <small class="text-muted"><?= date('d/m/Y H:i', strtotime($a['date_creation'])) ?></small>
-                            <?php if ($a['statut'] == 'nouvelle'): ?>
+                            <small class="text-muted"><?= date('d/m/Y H:i', strtotime($dateCreation)) ?></small>
+                            <?php if ($statut == 'nouvelle' && !empty($a['id'])): ?>
                             <a href="?page=alert&action=resoudre&id=<?= $a['id'] ?>" class="btn btn-sm btn-success">
                                 <i class="bi bi-check-lg me-1"></i>Résoudre
                             </a>

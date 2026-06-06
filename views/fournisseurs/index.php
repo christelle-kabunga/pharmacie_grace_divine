@@ -1,6 +1,9 @@
 <?php
 $pageTitle = "Gestion des Fournisseurs";
 require_once __DIR__ . '/../layouts/header.php';
+
+$fournisseurs = $fournisseurs ?? [];
+$total = $total ?? count($fournisseurs);
 ?>
 
 <div class="main-content">

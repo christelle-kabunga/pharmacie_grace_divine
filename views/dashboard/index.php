@@ -2,6 +2,19 @@
 require 'views/templates/header.php';
 require 'views/templates/sidebar.php';
 require 'views/templates/navbar.php';
+
+$stats = $stats ?? [
+    'ventes_jour' => 0,
+    'ventes_mois' => 0,
+    'stock_faible' => 0,
+    'medicaments_perimes' => 0,
+    'total_ventes_count' => 0,
+    'total_medicaments' => 0,
+];
+$ventesSemaine = $ventesSemaine ?? [];
+$topMedicaments = $topMedicaments ?? [];
+$dernieresVentes = $dernieresVentes ?? [];
+$alertes = $alertes ?? [];
 ?>
 
 <div class="main-content">
@@ -91,7 +104,7 @@ require 'views/templates/navbar.php';
                         <div class="d-flex justify-content-between">
                             <div>
                                 <div class="stat-label">Médicaments</div>
-                                <div class="stat-value text-secondary"><?= $stats['total_medicaments'] ?></div>
+                                <div class="stat-value text-secondary"><?= $stats['total_medicaments'] ?? 0 ?></div>
                             </div>
                             <div class="icon-box bg-secondary bg-opacity-10 text-secondary"><i class="bi bi-capsule"></i></div>
                         </div>
@@ -164,7 +177,7 @@ require 'views/templates/navbar.php';
                                         <td><small class="text-muted"><?= $v['numero_vente'] ?></small></td>
                                         <td><?= $v['nom_client'] ?: 'Comptant' ?></td>
                                         <td><?= $v['vendeur_prenom'] ?></td>
-                                        <td class="fw-bold"><?= number_format($v['total_final'], 2) ?> <?= $v['devise'] ?></td>
+                                        <td class="fw-bold"><?= number_format($v['total_final'] ?? 0, 2) ?> CDF</td>
                                     </tr>
                                     <?php endforeach; ?>
                                 </tbody>
